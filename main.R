@@ -46,7 +46,6 @@ ctx = tercenCtx()
 
 # properties
 paired_test     <- ifelse(is.null(ctx$op.value('Paired T-test')), FALSE, as.logical(ctx$op.value('Paired T-test')))
-paired_test     <- TRUE
 equal_variance  <- ifelse(is.null(ctx$op.value('Equal Variance')), TRUE, as.logical(ctx$op.value('Equal Variance')))
 sign_off_effect <- ifelse(is.null(ctx$op.value('Sign of effect')), 'Reverse', ctx$op.value('Sign of effect'))
 alternative     <- alternative_options[[ifelse(is.null(ctx$op.value('Alternative')), 'Two sided', ctx$op.value('Alternative'))]]
