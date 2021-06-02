@@ -1,9 +1,74 @@
 library(tercen)
 library(dplyr)
+library(reshape)
+library(pgCheckInput)
 
-(ctx = tercenCtx())  %>% 
-  select(.y, .ci, .ri) %>% 
-  group_by(.ci, .ri) %>%
-  summarise(median = median(.y)) %>%
+alternative_options <- list("Two sided" = "two.sided",
+                            "Greater"   = "greater",
+                            "Less"      = "less")
+
+checkFun = function(val) {
+  if (length(val) == 0) return(NA)
+  if (length(val) == 1) return(val)
+  if (length(val) > 1 ) stop("Pairing/grouping not consistent for paired t-test")
+}
+
+ttestFunPaired <- function(df, var.equal = TRUE, alternative = 'two.sided') { 
+  data <- melt(df, measure.vars = ".y")
+  data <- try(as.matrix(cast(data, pairing ~ group, fun.aggregate = checkFun)))
+  
+  result <- NULL
+  p <- tstat <- delta <- NaN
+  if (!inherits(data, "try-error") && ncol(data) == 2) {
+    test_result = try(t.test(x = data[,1], y = data[,2], paired = TRUE, alternative = alternative, var.equal = var.equal))
+    if (!inherits(test_result, "try-error")){
+      p     <- as.numeric(test_result$p.value)
+      tstat <- as.numeric(test_result$statistic)
+      delta <- as.numeric(test_result$estimate)
+    }
+  }
+  data.frame(.ri = df$.ri[1], .ci = df$.ci[1], p = p, tstat = tstat, delta = delta)
+}
+
+ttestFun <- function(df, var.equal = TRUE, alternative = 'two.sided') {
+  test_result <- try(t.test(.y ~ group, data = df, alternative = alternative, var.equal = var.equal))
+  if(!inherits(test_result, "try-error")){
+    p     <- as.numeric(test_result$p.value)
+    tstat <- as.numeric(test_result$statistic)
+    delta <- as.numeric(test_result$estimate[1] - test_result$estimate[2])
+  } else {
+    p <- tstat <- delta <- NaN
+  }
+  data.frame(.ri = df$.ri[1], .ci = df$.ci[1], p = p, tstat = tstat, delta = delta)
+}
+
+ctx = tercenCtx()
+
+# properties
+paired_test     <- ifelse(is.null(ctx$op.value('Paired T-test')), FALSE, as.logical(ctx$op.value('Paired T-test')))
+paired_test     <- TRUE
+equal_variance  <- ifelse(is.null(ctx$op.value('Equal Variance')), TRUE, as.logical(ctx$op.value('Equal Variance')))
+sign_off_effect <- ifelse(is.null(ctx$op.value('Sign of effect')), 'Reverse', ctx$op.value('Sign of effect'))
+alternative     <- alternative_options[[ifelse(is.null(ctx$op.value('Alternative')), 'Two sided', ctx$op.value('Alternative'))]]
+
+data <- ctx %>% 
+  select(.ri, .ci, .y, .x) %>%
+  dplyr::rename(group = .x)
+
+check(ExactNumberOfFactors, ctx, groupingType = "xAxis", nFactors = 1, altGroupingName = "Grouping factor")
+check(ExactNumberOfGroups, data, factorName = "group", nLevels = 2)
+
+result <- NULL
+if (paired_test) {
+  check(FactorPresent, ctx, groupingType = "colors", altGroupingName = "Pairing Factor" )
+  result <- data %>% 
+    mutate(pairing = ctx$select(ctx$colors[1]) %>% pull()) %>% 
+    do(ttestFunPaired(., equal_variance, alternative))
+} else{
+  result <- data %>% 
+    do(ttestFun(., equal_variance, alternative))
+}
+
+result %>%
   ctx$addNamespace() %>%
   ctx$save()
