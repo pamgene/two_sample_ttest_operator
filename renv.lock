@@ -141,18 +141,6 @@
       "Repository": "RSPM",
       "Hash": "a399e4773075fc2375b71f45fca186c4"
     },
-    "pgCheckInput": {
-      "Package": "pgCheckInput",
-      "Version": "3.5",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "pgcheckinput",
-      "RemoteUsername": "tercen",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "469d40b0481a3f83a375c962054aff66f63be195",
-      "Hash": "11d554b676bc4eb6cfb9a7c3a656f9d8"
-    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.5.0",

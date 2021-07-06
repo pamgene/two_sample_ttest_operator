@@ -1,7 +1,6 @@
 library(tercen)
 library(dplyr)
 library(reshape)
-library(pgCheckInput)
 
 alternative_options <- list("Two sided" = "two.sided",
                             "Greater"   = "greater",
@@ -44,7 +43,14 @@ ttestFun <- function(df, var.equal = TRUE, alternative = 'two.sided') {
 
 ctx = tercenCtx()
 
+# check color (= grouping)
 if (length(ctx$colors) != 1) stop("Grouping for two sample ttest must be defined using exactly one data color.")
+
+color_values <- ctx$select(ctx$colors) %>% pull()
+n_levels <- 2
+if (length(levels(as.factor(color_values))) != n_levels) {
+  stop(paste("Color (grouping) should contain exactly", n_levels, "groups."))
+}
 
 # properties
 paired_test     <- ifelse(is.null(ctx$op.value('Paired T-test')), FALSE, as.logical(ctx$op.value('Paired T-test')))
@@ -54,14 +60,11 @@ sign_off_effect <- ifelse(is.null(ctx$op.value('Sign of effect')), 'Normal', ctx
 
 data <- ctx %>% 
   select(.ri, .ci, .y) %>%
-  mutate(group = ctx$select(ctx$colors) %>% pull())
-
-check(ExactNumberOfFactors, ctx, groupingType = "xAxis", nFactors = 1, altGroupingName = "Grouping factor")
-check(ExactNumberOfGroups, data, factorName = "group", nLevels = 2)
+  mutate(group = color_values)
 
 result <- NULL
 if (paired_test) {
-  if (length(ctx$labels) != 1) stop("Grouping for two sample ttest must be defined using exactly one label.")
+  if (length(ctx$labels) != 1) stop("Pairing for two sample ttest must be defined using exactly one label.")
   
   result <- data %>% 
     mutate(pairing = ctx$select(ctx$labels) %>% pull()) %>% 
