@@ -1,50 +1,38 @@
-# Template R operator
-
-The `Template R operator` is a template repository for the creation of R operators in Tercen. An overview of steps for developing an operator are:
-
-1. create a github repo
-2. install tercen_studio
-3. login to tercen_studio
-4. git clone the newly created repo
-5. start developing in R in tercen_studio
-6. add R packages to the repo
-7. push to the github repo
-8. go to tercen and install the operator
-
-More information can be found in [Tercen app builder's guide](https://tercen.github.io/appbuilders-guide/).
-
-Below is the operator README standard structure:
+# two_sample_ttest_operator
 
 ##### Description
 
-The `Template R operator` is a template repository for the creation of R operators in Tercen.
+The `two_sample_ttest_operator` is an operator that determines if there is a significant difference between the means of two groups of matched pairs.
 
 ##### Usage
 
 Input projection|.
----|---
-`x-axis`        | type, description 
-`y-axis`        | type, description 
-`row`           | type, description 
-`column`        | type, description 
-`colors`        | type, description 
-`labels`        | type, description 
+-----------|--------
+`color`    | represents the groups to compare
+`y-axis`   | measurement value
+`labels`   | represents the pairing
 
 Input parameters|.
 ---|---
-`input_var`        | parameter description
+`Paired T-test`   | logical, indicating whether to perform pairing, default FALSE
+`Equal Variance`  | logical, whether to treat the two variances as being equal.
+`Alternative`     | character, Alternative option it can be either "Two sided", "Greater" or "Less". Default is "Two-sided".
+`Sign of effect`  | character, whether the output should be reversed ("Reverse") or not ("Normal"). Default value is "Normal".
 
 Output relations|.
 ---|---
-`output_var`        | output relation
-`Operator view`        | view of the Shiny application
+`p`     | numeric, p-value for the test
+`tstat` | numeric, the value of the t-statistic
+`delta` | numeric, the estimated difference in means
 
 ##### Details
 
-Details on the computation.
+The operator is the `t.test` function in base R.
+
+##### References
+
+see the `base::t.test` function of the R package for the documentation, 
 
 ##### See Also
 
-[template_shiny_operator](https://github.com/tercen/template_shiny_operator)
-, [template_docker_operator](https://github.com/tercen/template_docker_operator)
-
+[two_sample_ttest_operator](https://github.com/tercen/two_sample_ttest_operator)
