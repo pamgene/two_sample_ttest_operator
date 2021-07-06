@@ -51,30 +51,43 @@ ttestFun <- function(df, var.equal = TRUE, alternative = 'two.sided') {
 
 ctx = tercenCtx()
 
+if (length(ctx$colors) != 1) stop("Grouping for two sample ttest must be defined using exactly one data color.")
+
 # properties
 paired_test     <- ifelse(is.null(ctx$op.value('Paired T-test')), FALSE, as.logical(ctx$op.value('Paired T-test')))
 equal_variance  <- ifelse(is.null(ctx$op.value('Equal Variance')), TRUE, as.logical(ctx$op.value('Equal Variance')))
 alternative     <- alternative_options[[ifelse(is.null(ctx$op.value('Alternative')), 'Two sided', ctx$op.value('Alternative'))]]
-sign_off_effect <- ifelse(is.null(ctx$op.value('Sign of effect')), 'Reverse', ctx$op.value('Sign of effect'))
+sign_off_effect <- ifelse(is.null(ctx$op.value('Sign of effect')), 'Normal', ctx$op.value('Sign of effect'))
 
 data <- ctx %>% 
-  select(.ri, .ci, .y, .x) %>%
-  dplyr::rename(group = .x)
+  select(.ri, .ci, .y) %>%
+  mutate(group = ctx$select(ctx$colors) %>% pull())
 
 check(ExactNumberOfFactors, ctx, groupingType = "xAxis", nFactors = 1, altGroupingName = "Grouping factor")
 check(ExactNumberOfGroups, data, factorName = "group", nLevels = 2)
 
 result <- NULL
 if (paired_test) {
-  check(FactorPresent, ctx, groupingType = "colors", altGroupingName = "Pairing Factor" )
+  if (length(ctx$labels) != 1) stop("Grouping for two sample ttest must be defined using exactly one label.")
+  
   result <- data %>% 
-    mutate(pairing = ctx$select(ctx$colors[1]) %>% pull()) %>% 
+    mutate(pairing = ctx$select(ctx$labels) %>% pull()) %>% 
+    group_by(.ri, .ci) %>%
     do(ttestFunPaired(., equal_variance, alternative))
-} else{
+} else {
   result <- data %>% 
+    group_by(.ri, .ci) %>%
     do(ttestFun(., equal_variance, alternative))
 }
 
+if (sign_off_effect == "Reverse") {
+  result <- result %>% mutate(delta = -delta,
+                              tstat = -tstat)
+}
+
 result %>%
+  mutate(logp = -log10(p)) %>%
+  mutate(fdr = p.adjust(p, method = "fdr")) %>%
+  mutate(Top = as.numeric(as.factor(rank(p)), ties.method = "min")) %>%
   ctx$addNamespace() %>%
   ctx$save()
