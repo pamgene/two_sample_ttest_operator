@@ -14,7 +14,7 @@
   "columns": ["Supergroup"],
   "rows": ["Variable"],
   "colors": ["Group"],
-  "labels": [""],
+  "labels": [],
   "yAxis": "Measurement",
   "xAxis": ""
 }
