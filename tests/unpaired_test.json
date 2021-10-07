@@ -1,0 +1,20 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "unpaired",
+  "namespace": "unpaired",
+  "inputDataUri": "2groups_super_pairing_control_exp.csv",
+  "outputDataUri": ["unpaired_table1.csv","unpaired_table2.csv","unpaired_table3.csv"],
+  "propertyValues": [
+    {
+      "kind": "PropertyValue",
+      "name": "Paired T-test",
+      "value": "false"
+    }
+  ],
+  "columns": ["Supergroup"],
+  "rows": ["Variable"],
+  "colors": ["Group"],
+  "labels": [""],
+  "yAxis": "Measurement",
+  "xAxis": ""
+}
