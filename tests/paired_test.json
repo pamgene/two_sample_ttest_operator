@@ -3,7 +3,7 @@
   "name": "paired",
   "namespace": "paired",
   "inputDataUri": "2groups_super_pairing_control_exp.csv",
-  "outputDataUri": ["paired_table1.csv","paired_table2.csv"],
+  "outputDataUri": ["paired_table1.csv","paired_table2.csv","paired_table3.csv"],
   "propertyValues": [
     {
       "kind": "PropertyValue",
