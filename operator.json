@@ -3,39 +3,35 @@
   "description": "Determines if there is a significant difference between the means of two groups",
   "tags": ["pamgene"],
   "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/two_sample_ttest_operator"],
+  "urls": ["https://github.com/pamgene/two_sample_ttest_operator"],
   "properties": [
     {
-    "kind": "BooleanProperty",
-    "name": "Paired T-test",
-    "defaultValue": false,
-    "description": "whether you want a paired t-test."
-  },
-  {
-    "kind": "BooleanProperty",
-    "name": "Equal Variance",
-    "defaultValue": true,
-    "description": "whether to treat the two variances as being equal."
-  },
-  {
-    "kind": "EnumeratedProperty",
-    "name": "Alternative",
-    "defaultValue": "Two sided",
-    "description": "The alternative hypothesis",
-	  "values": [
-      "Two sided",
-      "Greater",
-      "Less"
-      ]
-  },
-  {
-    "kind": "EnumeratedProperty",
-    "name": "Sign of effect",
-    "defaultValue": "Normal",
-    "description": "whether the output variables delta and tstat should be reversed",
-	  "values": [
-      "Normal",
-      "Reverse"
-      ]
-  } ]
+      "kind": "BooleanProperty",
+      "name": "Paired T-test",
+      "defaultValue": "FALSE",
+      "description": "whether you want a paired t-test.",
+      "values": {}
+    },
+    {
+      "kind": "BooleanProperty",
+      "name": "Equal Variance",
+      "defaultValue": "TRUE",
+      "description": "whether to treat the two variances as being equal.",
+      "values": {}
+    },
+    {
+      "kind": "EnumeratedProperty",
+      "name": "Alternative",
+      "defaultValue": "Two sided",
+      "description": "The alternative hypothesis",
+      "values": ["Two sided", "Greater", "Less"]
+    },
+    {
+      "kind": "EnumeratedProperty",
+      "name": "Sign of effect",
+      "defaultValue": "Normal",
+      "description": "whether the output variables delta and tstat should be reversed",
+      "values": ["Normal", "Reverse"]
+    }
+  ]
 }
