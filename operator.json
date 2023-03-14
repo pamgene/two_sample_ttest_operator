@@ -8,14 +8,14 @@
     {
       "kind": "BooleanProperty",
       "name": "Paired T-test",
-      "defaultValue": "FALSE",
+      "defaultValue": false,
       "description": "whether you want a paired t-test.",
       "values": {}
     },
     {
       "kind": "BooleanProperty",
       "name": "Equal Variance",
-      "defaultValue": "TRUE",
+      "defaultValue": true,
       "description": "whether to treat the two variances as being equal.",
       "values": {}
     },
