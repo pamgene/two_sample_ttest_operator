@@ -29,7 +29,7 @@
     {
       "kind": "EnumeratedProperty",
       "name": "Sign of effect",
-      "defaultValue": "Normal",
+      "defaultValue": "Reverse",
       "description": "whether the output variables delta and tstat should be reversed",
       "values": ["Normal", "Reverse"]
     }
